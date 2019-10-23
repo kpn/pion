@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "pion.fullname" . }}-ui
+  labels:
+    app: {{ template "pion.name" . }}
+    component: ui
+    network-zone: orange
+    chart: {{ template "pion.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  tls:
+  - hosts:
+    {{- range .Values.ui.ingress.hosts }}
+    - {{ . }}
+    {{- end }}
+  rules:
+  {{- range .Values.ui.ingress.hosts }}
+  - host: {{ . }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ template "pion.fullname" $ }}-ui
+          servicePort: 8080
+        path: /
+  {{- end }}

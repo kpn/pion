@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Update ACLs of bucket '{{data.bucketName}}'</h1>
+<div mat-dialog-content>
+  <mat-form-field class="full-width-input">
+    <textarea placeholder="ACLs" class="acl-editor"
+              [(ngModel)]="data.acls"
+              matInput
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="10"
+              cdkAutosizeMaxRows="10"></textarea>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="close()">Close</button>
+  <button mat-button (click)="save()" cdkFocusInitial>Save</button>
+</div>

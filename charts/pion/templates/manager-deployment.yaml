@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "pion.fullname" . }}-manager
+  labels:
+    app: {{ template "pion.name" . }}
+    component: manager
+    chart: {{ template "pion.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.manager.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "pion.name" . }}
+      component: manager
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "pion.name" . }}
+        component: manager
+        release: {{ .Release.Name }}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: {{ .Chart.Name }}-manager
+          image: "{{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag }}"
+          imagePullPolicy: {{ .Values.manager.image.pullPolicy }}
+          args:
+          - /opt/pion-manager
+          - --stderrthreshold={{ .Values.log.threshold }}
+          - --v={{ .Values.log.level }}
+          env:
+          - name: ETCD_ADDRESS
+            value: {{ .Values.etcdAddress }}
+          - name: AUTHZ_SERVICE_URL
+            value: http://{{ template "pion.fullname" . }}-authz:8080
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          resources:
+{{ toYaml .Values.manager.resources | indent 12 }}

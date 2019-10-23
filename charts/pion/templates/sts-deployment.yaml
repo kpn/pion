@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "pion.fullname" . }}-sts
+  labels:
+    app: {{ template "pion.name" . }}
+    component: sts
+    chart: {{ template "pion.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.sts.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "pion.name" . }}
+      component: sts
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "pion.name" . }}
+        component: sts
+        release: {{ .Release.Name }}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.sts.image.repository }}:{{ .Values.sts.image.tag }}"
+          imagePullPolicy: {{ .Values.sts.image.pullPolicy }}
+          args:
+          - /opt/pion-sts
+          - --stderrthreshold=INFO
+          - --v=2
+          ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+          env:
+          - name: ETCD_ADDRESS
+            value: {{ .Values.etcdAddress }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

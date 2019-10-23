@@ -1,0 +1,12 @@
+.vertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  min-width: 400px;
+  margin: 2em auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}

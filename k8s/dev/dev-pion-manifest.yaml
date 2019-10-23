@@ -1,0 +1,532 @@
+---
+# Source: pion/templates/ui-secret.yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  labels:
+    app: pion
+    component: ui
+    release: dev
+  name: dev-pion-ui
+data:
+  ldap-binddn: "Y249YWRtaW4sZGM9ZXhhbXBsZSxkYz1vcmc="
+  ldap-bindpassword: "cGlvbmV4YW1wbGVwYXNzd29yZA=="
+
+---
+# Source: pion/templates/authz-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-pion-authz
+  labels:
+    app: pion
+    component: authz
+    release: dev
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: pion
+    component: authz
+    release: dev
+
+---
+# Source: pion/templates/manager-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-pion-manager
+  labels:
+    app: pion
+    component: manager
+    release: dev
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: pion
+    component: manager
+    release: dev
+---
+# Source: pion/templates/proxy-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-pion-proxy
+  labels:
+    app: pion
+    component: proxy
+    release: dev
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: pion
+    component: proxy
+    release: dev
+
+---
+# Source: pion/templates/sts-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-pion-sts
+  labels:
+    app: pion
+    component: sts
+    release: dev
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: pion
+    component: sts
+    release: dev
+
+---
+# Source: pion/templates/ui-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-pion-ui
+  labels:
+    app: pion
+    component: ui
+    release: dev
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: pion
+    component: ui
+    release: dev
+
+---
+# Source: pion/templates/authz-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-pion-authz
+  labels:
+    app: pion
+    component: authz
+    release: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pion
+      component: authz
+      release: dev
+  template:
+    metadata:
+      labels:
+        app: pion
+        component: authz
+        release: dev
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: pion-authz
+          image: "quay.io/canhnt/pion-authz:latest"
+          imagePullPolicy: Always
+          args:
+          - /opt/pion-authz
+          - --stderrthreshold=INFO
+          - --v=2
+          env:
+          - name: ETCD_ADDRESS
+            value: http://etcd-cluster-client:2379
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            
+
+---
+# Source: pion/templates/manager-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-pion-manager
+  labels:
+    app: pion
+    component: manager
+    release: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pion
+      component: manager
+      release: dev
+  template:
+    metadata:
+      labels:
+        app: pion
+        component: manager
+        release: dev
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: pion-manager
+          image: "quay.io/canhnt/pion-manager:latest"
+          imagePullPolicy: Always
+          args:
+          - /opt/pion-manager
+          - --stderrthreshold=INFO
+          - --v=2
+          env:
+          - name: ETCD_ADDRESS
+            value: http://etcd-cluster-client:2379
+          - name: AUTHZ_SERVICE_URL
+            value: http://dev-pion-authz:8080
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            
+
+---
+# Source: pion/templates/proxy-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-pion-proxy
+  labels:
+    app: pion
+    component: proxy
+    release: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pion
+      component: proxy
+      release: dev
+  template:
+    metadata:
+      labels:
+        app: pion
+        component: proxy
+        release: dev
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000    
+      containers:
+        - name: pion-proxy
+          image: "quay.io/canhnt/pion-proxy:latest"
+          imagePullPolicy: Always
+          args:
+          - /opt/pion-proxy
+          - --stderrthreshold=INFO
+          - --v=2
+          env:
+          - name: MINIO_SERVICE_URL
+            value: http://dev-minio:9000
+          - name: STS_SERVICE_URL
+            value: http://dev-pion-sts:8080
+          - name: AUTHZ_SERVICE_URL
+            value: http://dev-pion-authz:8080
+          - name: MANAGER_SERVICE_URL
+            value: http://dev-pion-manager:8080
+          - name: ETCD_ADDRESS
+            value: http://etcd-cluster-client:2379
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: accesskey
+                name: dev-minio
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                key: secretkey
+                name: dev-minio
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          resources:
+            limits:
+              cpu: 1
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            
+
+---
+# Source: pion/templates/sts-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-pion-sts
+  labels:
+    app: pion
+    component: sts
+    release: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pion
+      component: sts
+      release: dev
+  template:
+    metadata:
+      labels:
+        app: pion
+        component: sts
+        release: dev
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: pion
+          image: "quay.io/canhnt/pion-sts:latest"
+          imagePullPolicy: Always
+          args:
+          - /opt/pion-sts
+          - --stderrthreshold=INFO
+          - --v=2
+          ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+          env:
+          - name: ETCD_ADDRESS
+            value: http://etcd-cluster-client:2379
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          resources:
+            null
+            
+
+---
+# Source: pion/templates/ui-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-pion-ui
+  labels:
+    app: pion
+    component: ui
+    release: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pion
+      component: ui
+      release: dev
+  template:
+    metadata:
+      labels:
+        app: pion
+        component: ui
+        release: dev
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000    
+      containers:
+        - name: pion-ui
+          image: "quay.io/canhnt/pion-ui:latest"
+          imagePullPolicy: Always
+          args:
+          - /opt/pion-ui
+          - --stderrthreshold=INFO
+          - --v=2
+          - --ldap-host=dev-openldap
+          - --ldap-port=389
+          - --ldap-type=ldap
+          - --ldap-binddn=$(LDAP_BIND_DN)
+          - --ldap-bindpassword=$(LDAP_BIND_PASSWORD)
+          - --ldap-userbase=ou=People,dc=example,dc=org
+          - --ldap-groupbase=ou=Groups,dc=example,dc=org
+          - --ldap-userclass=inetOrgPerson
+          - --ldap-groupclass=groupOfNames
+          - --token-ttl=2160h
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          env:
+          - name: STS_SERVICE_URL
+            value: http://dev-pion-sts:8080
+          - name: MANAGER_SERVICE_URL
+            value: http://dev-pion-manager:8080
+          - name: MINIO_SERVICE_URL
+            value: http://dev-minio:9000
+          - name: LDAP_BIND_DN
+            valueFrom:
+              secretKeyRef:
+                key: ldap-binddn
+                name: dev-pion-ui
+          - name: LDAP_BIND_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: ldap-bindpassword
+                name: dev-pion-ui
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: accesskey
+                name: dev-minio
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                key: secretkey
+                name: dev-minio
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            
+
+---
+# Source: pion/templates/proxy-ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: dev-pion-proxy
+  labels:
+    app: pion
+    component: proxy
+    release: dev
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 128m
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    nginx.ingress.kubernetes.io/limit-rps: "50"
+    nginx.ingress.kubernetes.io/limit-connections: "100"
+spec:
+  tls:
+  - hosts:
+      - pion-gw.example.org
+  rules:
+  - host: pion-gw.example.org
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: dev-pion-proxy
+            servicePort: 8080
+
+---
+# Source: pion/templates/ui-ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: dev-pion-ui
+  labels:
+    app: pion
+    component: ui
+    release: dev
+spec:
+  tls:
+  - hosts:
+    - pion.example.org
+  rules:
+  - host: pion.example.org
+    http:
+      paths:
+      - backend:
+          serviceName: dev-pion-ui
+          servicePort: 8080
+        path: /
+

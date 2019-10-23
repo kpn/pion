@@ -1,0 +1,27 @@
+.toolbar {
+  margin: 10px 10px;
+}
+table {
+  width: 100%;
+  margin: 5px;
+
+  .multi-subjects {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+  }
+
+  .subject-item {
+    padding: 2px 0;
+  }
+
+  .subject-type {
+    font-size: .8em;
+    color: rgba(69, 69, 69, .5)
+  }
+
+  a {
+    color: #3497DA;
+    text-decoration: none;
+  }
+}

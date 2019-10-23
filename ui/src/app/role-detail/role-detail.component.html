@@ -1,0 +1,63 @@
+<div *ngIf="role">
+  <h3>{{role.name}} Role</h3>
+
+  <table mat-table [dataSource]="ruleDetails" class="mat-elevation-z8">
+    <ng-container matColumnDef="resource">
+      <th mat-header-cell *matHeaderCellDef>Resource</th>
+      <td mat-cell *matCellDef="let rule">{{rule.resource}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="list">
+      <th mat-header-cell *matHeaderCellDef>List</th>
+      <td mat-cell *matCellDef="let rule">
+        <i class="material-icons icon-color" *ngIf="getActionValue(rule, 'list')">done</i>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="get">
+      <th mat-header-cell *matHeaderCellDef>Get</th>
+      <td mat-cell *matCellDef="let rule">
+        <i class="material-icons icon-color" *ngIf="getActionValue(rule, 'get')">done</i>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="create">
+      <th mat-header-cell *matHeaderCellDef>Create</th>
+      <td mat-cell *matCellDef="let rule">
+        <i class="material-icons icon-color" *ngIf="getActionValue(rule, 'create')">done</i>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef>Delete</th>
+      <td mat-cell *matCellDef="let rule">
+        <i class="material-icons icon-color" *ngIf="getActionValue(rule, 'delete')">done</i>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="update">
+      <th mat-header-cell *matHeaderCellDef>Update</th>
+      <td mat-cell *matCellDef="let rule">
+        <i class="material-icons icon-color" *ngIf="getActionValue(rule, 'update')">done</i>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="publish">
+      <th mat-header-cell *matHeaderCellDef>Publish</th>
+      <td mat-cell *matCellDef="let rule">
+        <i class="material-icons icon-color" *ngIf="getActionValue(rule, 'publish')">done</i>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="unpublish">
+      <th mat-header-cell *matHeaderCellDef>Unpublish</th>
+      <td mat-cell *matCellDef="let rule">
+        <i class="material-icons icon-color" *ngIf="getActionValue(rule, 'unpublish')">done</i>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+</div>

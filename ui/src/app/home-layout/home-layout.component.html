@@ -1,0 +1,17 @@
+<app-header></app-header>
+
+<mat-sidenav-container>
+  <mat-sidenav #snav mode="side" opened class="side-nav" [fixedInViewport]="true" [fixedBottomGap]="true" fixedTopGap="64">
+    <mat-nav-list>
+      <a mat-list-item routerLink="/main/access-keys">Access Keys</a>
+      <a mat-list-item routerLink="/main/buckets">Buckets</a>
+      <mat-divider></mat-divider>
+      <h3 matSubheader>Access Control</h3>
+      <a mat-list-item routerLink="/main/roles">Roles</a>
+      <a mat-list-item routerLink="/main/role-bindings">Role bindings</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,75 @@
+dn: dc=example,dc=org
+changetype: modify
+
+objectClass: top
+changetype: modify
+objectClass: dcObject
+changetype: modify
+objectclass: organization
+changetype: modify
+o: Example Organization
+# dc: Example
+# description: LDAP Example
+
+dn: ou=People,dc=example,dc=org
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=example,dc=org
+objectClass: organizationalUnit
+ou: Groups
+
+# Users
+dn: cn=alice,ou=People,dc=example,dc=org
+uid: alice
+cn: alice
+sn: 2
+objectClass: top
+objectClass: inetOrgPerson
+userPassword: alice
+mail: alice@example.org
+
+dn: cn=billy,ou=People,dc=example,dc=org
+uid: billy
+cn: billy
+sn: 3
+objectClass: top
+objectClass: inetOrgPerson
+userPassword: billy
+mail: billy@example.org
+
+dn: cn=carol,ou=People,dc=example,dc=org
+uid: carol
+cn: carol
+sn: 4
+objectClass: top
+objectClass: inetOrgPerson
+userPassword: carol
+mail: carol@example.org
+
+dn: cn=dave,ou=People,dc=example,dc=org
+uid: dave
+cn: dave
+sn: 5
+objectClass: top
+objectClass: inetOrgPerson
+userPassword: dave
+mail: dave@example.org
+
+# Groups
+dn: cn=group_customer1,ou=Groups,dc=example,dc=org
+description: Members of the Customer1
+cn: group_customer1
+member: cn=alice,ou=People,dc=example,dc=org
+member: cn=billy,ou=People,dc=example,dc=org
+objectClass: top
+objectClass: groupOfNames
+
+dn: cn=group_customer2,ou=Groups,dc=example,dc=org
+description: Members of the Customer2
+cn: group_customer2
+member: cn=carol,ou=People,dc=example,dc=org
+member: cn=dave,ou=People,dc=example,dc=org
+member: cn=billy,ou=People,dc=example,dc=org
+objectClass: top
+objectClass: groupOfNames

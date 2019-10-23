@@ -1,0 +1,33 @@
+<mat-toolbar color="primary" *ngIf="isLoggedIn$ | async as isLoggedIn">
+  <button mat-icon-button (click)="toggleSideNav()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <h2>Pion - Object Storage Service</h2>
+
+  <mat-menu #profileMenu="matMenu">
+    <ng-template matMenuContent>
+      <div class="user-profile">
+        <div class="customer">
+          <span class="label">Account:</span>
+          <span class="value">{{currentUser.customer}}</span>
+        </div>
+        <div class="display-name">
+          <span class="label">Username:</span>
+          <span class="value">{{currentUser.username}}</span>
+        </div>
+        <div class="email">
+          <span class="label">Email:</span>
+          <span class="value">{{currentUser.mail}}</span>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="onLogout()" *ngIf="isLoggedIn">
+        <mat-icon>power_settings_new</mat-icon>Log Out</button>
+    </ng-template>
+  </mat-menu>
+
+  <button class="profile  " mat-button [matMenuTriggerFor]="profileMenu">
+    <mat-icon>account_circle</mat-icon>
+    {{currentUser.displayName}}
+  </button>
+</mat-toolbar>

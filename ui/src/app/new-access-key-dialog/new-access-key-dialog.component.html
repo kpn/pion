@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>New AccessKey</h1>
+<div mat-dialog-content>
+  <p>Your generated access key and secret key</p>
+  <mat-form-field class="full-width-input">
+    <input matInput placeholder="Access Key ID" value="{{data.accessKeyId}}" readonly="true"
+           (click)="$event.target.select()">
+  </mat-form-field>
+  <mat-form-field class="full-width-input">
+    <input matInput placeholder="Secret Key ID" value="{{data.secretKeyId}}" readonly="true"
+           (click)="$event.target.select()">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+</div>

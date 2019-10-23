@@ -1,0 +1,110 @@
+# Upstream Minio cluster service after the Pion gateway
+minioRelease: minio-backend
+
+# Etcd cluster address to store Pion settings
+etcdAddress: http://etcd-cluster-client:2379
+
+log:
+  threshold: INFO
+  level: 2
+
+# Proxy component configuration
+proxy:
+  replicaCount: 1
+  image:
+    repository: canhnt/pion-proxy
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+  ingress:
+    hosts:
+      - pion-gw.example.com
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Authorization component configuration
+authz:
+  replicaCount: 1
+  image:
+    repository: canhnt/pion-authz
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+manager:
+  replicaCount: 1
+  image:
+    repository: canhnt/pion-manager
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# UI component configuration
+ui:
+  replicaCount: 1
+  image:
+    repository: canhnt/pion-ui
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+  tokenTTL: 2160h # access keys lifetime, 2160h=3 months
+  ingress:
+    hosts:
+      - pion.example.com
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+sts:
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  replicaCount: 1
+  image:
+    repository: canhnt/pion-sts
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+  tokenTTL: 2160h # access keys lifetime, 2160h=3 months
+  ingress:
+    hosts:
+      - pion.example.com
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+
+
+# LDAP configuration used for authenticating users via UI
+ldap:
+  host: consumer-ldap.internal.example.org
+  type: ldaps
+  userdn: ou=People,dc=org
+  groupdn: ou=Groups,dc=org
+  userclass: User
+  groupclass: Group
+  username: ''
+  password: ''
+

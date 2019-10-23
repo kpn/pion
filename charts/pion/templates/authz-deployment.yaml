@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "pion.fullname" . }}-authz
+  labels:
+    app: {{ template "pion.name" . }}
+    component: authz
+    chart: {{ template "pion.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.authz.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "pion.name" . }}
+      component: authz
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "pion.name" . }}
+        component: authz
+        release: {{ .Release.Name }}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: {{ .Chart.Name }}-authz
+          image: "{{ .Values.authz.image.repository }}:{{ .Values.authz.image.tag }}"
+          imagePullPolicy: {{ .Values.authz.image.pullPolicy }}
+          args:
+          - /opt/pion-authz
+          - --stderrthreshold={{ .Values.log.threshold }}
+          - --v={{ .Values.log.level }}
+          env:
+          - name: ETCD_ADDRESS
+            value: {{ .Values.etcdAddress }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          resources:
+{{ toYaml .Values.authz.resources | indent 12 }}

@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "pion.fullname" . }}-proxy
+  labels:
+    app: {{ template "pion.name" . }}
+    component: proxy
+    chart: {{ template "pion.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.proxy.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "pion.name" . }}
+      component: proxy
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "pion.name" . }}
+        component: proxy
+        release: {{ .Release.Name }}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000    
+      containers:
+        - name: {{ .Chart.Name }}-proxy
+          image: "{{ .Values.proxy.image.repository }}:{{ .Values.proxy.image.tag }}"
+          imagePullPolicy: {{ .Values.proxy.image.pullPolicy }}
+          args:
+          - /opt/pion-proxy
+          - --stderrthreshold={{ .Values.log.threshold }}
+          - --v={{ .Values.log.level }}
+          env:
+          - name: MINIO_SERVICE_URL
+            value: {{ template "pion.minio-service-url" . }}
+          - name: STS_SERVICE_URL
+            value: http://{{ template "pion.fullname" . }}-sts:8080
+          - name: AUTHZ_SERVICE_URL
+            value: http://{{ template "pion.fullname" . }}-authz:8080
+          - name: MANAGER_SERVICE_URL
+            value: http://{{ template "pion.fullname" . }}-manager:8080
+          - name: ETCD_ADDRESS
+            value: {{ .Values.etcdAddress }}
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: accesskey
+                name: {{ .Values.minioRelease }}
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                key: secretkey
+                name: {{ .Values.minioRelease }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          resources:
+{{ toYaml .Values.proxy.resources | indent 12 }}
