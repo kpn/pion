@@ -9,7 +9,10 @@ kubectl apply -f dev-openldap-manifest.yaml
 
 Add the LDAP schema and sample LDAP entities:
 ```bash
-ldapmodify -a -x -D "cn=admin,dc=example,dc=org" -w ${LDAP_ADMIN_PASSWORD} -H ldap://localhost -f example.ldif
+OPENLDAP_POD=$(kubectl get pod -l app=openldap -o jsonpath={.items[*].metadata.name})
+kubectl cp example.ldif ${OPENLDAP_POD}:/
+kubectl cp ldap-bootstrap.sh ${OPENLDAP_POD}:/
+kubectl exec ${OPENLDAP_POD} bash /ldap-bootstrap.sh
 ```
 
 Verify if users and groups are added:

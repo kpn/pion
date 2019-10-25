@@ -12,7 +12,7 @@ metadata:
     heritage: Tiller
 type: Opaque
 data:
-  LDAP_ADMIN_PASSWORD: "UW95em1KVlp2NDFCc0FOclRsZEpqbDIzRU9aR0lLeXk="
+  LDAP_ADMIN_PASSWORD: "cGlvbmV4YW1wbGVwYXNzd29yZA=="
   LDAP_CONFIG_PASSWORD: "WjFlUE13YlNXUHFGOWwwaDl2SlpSblZJdlRUbmd6cXM="
 
 
