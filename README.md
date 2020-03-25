@@ -1,5 +1,5 @@
 # Pion - Object Storage Service Gateway
-
+![travis-ci](https://travis-ci.org/kpn/pion.svg?branch=master)
 ## Features
 - Support S3 HTTP protocol.
 - Multi-tenancy: Pion supports multi-tenancy. Buckets in customer accounts are isolated. When logging in, users must provide 
