@@ -12,8 +12,8 @@ metadata:
     heritage: Tiller
 type: Opaque
 data:
-  LDAP_ADMIN_PASSWORD: "cGlvbmV4YW1wbGVwYXNzd29yZA=="
-  LDAP_CONFIG_PASSWORD: "WjFlUE13YlNXUHFGOWwwaDl2SlpSblZJdlRUbmd6cXM="
+  LDAP_ADMIN_PASSWORD: "cGlvbmV4YW1wbGVwYXNzd29yZA==" # Example credential, not for production
+  LDAP_CONFIG_PASSWORD: "WjFlUE13YlNXUHFGOWwwaDl2SlpSblZJdlRUbmd6cXM=" # Example credential, not for production
 
 
 ---

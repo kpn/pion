@@ -12,8 +12,8 @@ metadata:
     heritage: Tiller
 type: Opaque
 data:
-  accesskey: "QUtJQUlPU0ZPRE5ON0VYQU1QTEU="
-  secretkey: "d0phbHJYVXRuRkVNSS9LN01ERU5HL2JQeFJmaUNZRVhBTVBMRUtFWQ=="
+  accesskey: "QUtJQUlPU0ZPRE5ON0VYQU1QTEU=" # Example credential, not for production
+  secretkey: "d0phbHJYVXRuRkVNSS9LN01ERU5HL2JQeFJmaUNZRVhBTVBMRUtFWQ==" # Example credential, not for production
 
 ---
 # Source: minio/templates/configmap.yaml
